@@ -1,78 +1,89 @@
+call plug#begin('~/.vim/plugged') 
+
+Plug 'scrooloose/nerdtree', { 'on': ['NERDTreeToggle'] }
+Plug 'w0ng/vim-hybrid'
+Plug 'marijnh/tern_for_vim'
+Plug 'Shougo/neocomplete'
+Plug 'Shougo/neosnippet'
+Plug 'Shougo/neosnippet-snippets'
+Plug 'mattn/emmet-vim'
+
+call plug#end()
+
 syntax on
-set number
+set mouse=a
+set nu
 set tabstop=4
-set autoindent
+"set autoindent
 set expandtab
 set shiftwidth=4
-
-nmap <Tab>      gt
-nmap <S-Tab>    gT
-
-"---------------------------
-" Start Neobundle Settings.
-"---------------------------
-" bundleで管理するディレクトリを指定
-set runtimepath+=~/.vim/bundle/neobundle.vim/
-
-" Required:
-call neobundle#begin(expand('~/.vim/bundle/'))
-
-" neobundle自体をneobundleで管理
-NeoBundleFetch 'Shougo/neobundle.vim'
-
-" 今後このあたりに追加のプラグインをどんどん書いて行きます！！"
-NeoBundle 'scrooloose/nerdtree'
-"NeoBundle 'Townk/vim-autoclose'
-NeoBundle 'mattn/emmet-vim'
-NeoBundle 'w0ng/vim-hybrid'
-NeoBundle 'Shougo/unite.vim'
-NeoBundle 'nathanaelkane/vim-indent-guides'
-
-call neobundle#end()
-
-" Required:
-filetype plugin indent on
-
-" 未インストールのプラグインがある場合、インストールするかどうかを尋ねてくれるようにする設定
-" 毎回聞かれると邪魔な場合もあるので、この設定は任意です。
-NeoBundleCheck
-
-"-------------------------
-" End Neobundle Settings.
-"-------------------------
-
-
+:NERDTreeToggle
 set background=dark
 colorscheme hybrid
+set backspace=indent,eol,start
+
+nmap <Tab> gt
+nmap <S-Tab> gT
+
+"let g:user_emmet_leader_key='<C-E>'
+
+autocmd FileType html imap <buffer><expr><C-E>
+    \ emmet#isExpandable() ? "\<plug>(emmet-expand-abbr)" :
+    \ "\<C-E>"
+
+inoremap { {}<Left>
+inoremap {<Enter> {}<Left><CR><ESC><S-o>
+inoremap ( ()<ESC>i
+inoremap (<Enter> ()<Left><CR><ESC><S-o>
 
 
+" 起動時に有効化
+let g:neocomplete#enable_at_startup = 1
+" 大文字が入力されるまで大文字小文字の区別を無視する
+let g:neocomplete#enable_smart_case = 1
+" _(アンダースコア)区切りの補完を有効化
+let g:neocomplete#enable_underbar_completion = 1
+let g:neocomplete#enable_camel_case_completion  =  1
+" ポップアップメニューで表示される候補の数
+let g:neocomplete#max_list = 20
+" シンタックスをキャッシュするときの最小文字長
+let g:neocomplete#sources#syntax#min_keyword_length = 3
+" 補完を表示する最小文字数
+let g:neocomplete#auto_completion_start_length = 2
+" preview window を閉じない
+let g:neocomplete#enable_auto_close_preview = 0
+"AutoCmd InsertLeave * silent! pclose!
 
-" unite {{{
-let g:unite_enable_start_insert=1
-nmap <silent> <C-u><C-b> :<C-u>Unite buffer<CR>
-nmap <silent> <C-u><C-f> :<C-u>UniteWithBufferDir -buffer-name=files file<CR>
-nmap <silent> <C-u><C-r> :<C-u>Unite -buffer-name=register register<CR>
-nmap <silent> <C-u><C-m> :<C-u>Unite file_mru<CR>
-nmap <silent> <C-u><C-u> :<C-u>Unite buffer file_mru<CR>
-nmap <silent> <C-u><C-a> :<C-u>UniteWithBufferDir -buffer-name=files buffer file_mru bookmark file<CR>
-au FileType unite nmap <silent> <buffer> <expr> <C-j> unite#do_action('split')
-au FileType unite imap <silent> <buffer> <expr> <C-j> unite#do_action('split')
-au FileType unite nmap <silent> <buffer> <expr> <C-l> unite#do_action('vsplit')
-au FileType unite imap <silent> <buffer> <expr> <C-l> unite#do_action('vsplit')
-au FileType unite nmap <silent> <buffer> <ESC><ESC> q
-au FileType unite imap <silent> <buffer> <ESC><ESC> <ESC>q
-" }}}
+let g:neocomplete#max_keyword_width = 10000
+
+if !exists('g:neocomplete#delimiter_patterns')
+    let g:neocomplete#delimiter_patterns= {}
+endif
+let g:neocomplete#delimiter_patterns.ruby = ['::']
+
+if !exists('g:neocomplete#same_filetypes')
+    let g:neocomplete#same_filetypes = {}        
+endif
+let g:neocomplete#same_filetypes.ruby = 'eruby'
 
 
+if !exists('g:neocomplete#force_omni_input_patterns')
+    let g:neocomplete#force_omni_input_patterns = {}
+endif
 
-"let g:indent_guides_enable_on_vim_startup = 1
+let g:neocomplete#force_omni_input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\w*\|\h\w*::\w*'
+let g:neocomplete#force_omni_input_patterns.typescript = '[^. \t]\.\%(\h\w*\)\?' " Same as JavaScript
+let g:neocomplete#force_omni_input_patterns.go = '[^. \t]\.\%(\h\w*\)\?'         " Same as JavaScript
 
-let g:indent_guides_auto_colors=0
-autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd   ctermbg=240
-autocmd VimEnter,Colorscheme * :hi IndentGuidesEven  ctermbg=60
-let g:indent_guides_enable_on_vim_startup=1
-let g:indent_guides_guide_size=1
+let s:neco_dicts_dir = $HOME . '/dicts'
+if isdirectory(s:neco_dicts_dir)
+    let g:neocomplete#sources#dictionary#dictionaries = {
+    \   'ruby': s:neco_dicts_dir . '/ruby.dict',
+    \   'javascript': s:neco_dicts_dir . '/jquery.dict',
+    \ }
+endif
+let g:neocomplete#data_directory = $HOME . '/.vim/cache/neocomplete'
+
+call neocomplete#custom#source('look', 'min_pattern_length', 1)
 
 
-nnoremap <C-h> :vsp<CR> :exe("tjump ".expand('<cword>'))<CR>
-nnoremap <C-k> :split<CR> :exe("tjump ".expand('<cword>'))<CR>
