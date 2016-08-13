@@ -2,39 +2,45 @@ call plug#begin('~/.vim/plugged')
 
 Plug 'scrooloose/nerdtree', { 'on': ['NERDTreeToggle'] }
 Plug 'w0ng/vim-hybrid'
-Plug 'marijnh/tern_for_vim'
 Plug 'Shougo/neocomplete'
 Plug 'Shougo/neosnippet'
 Plug 'Shougo/neosnippet-snippets'
 Plug 'mattn/emmet-vim'
-
+Plug 'myhere/vim-nodejs-complete'
 call plug#end()
 
 syntax on
-set mouse=a
+"set mouse=a
 set nu
-set tabstop=4
+set tabstop=2
 "set autoindent
 set expandtab
-set shiftwidth=4
-:NERDTreeToggle
+set shiftwidth=2
 set background=dark
 colorscheme hybrid
 set backspace=indent,eol,start
 
+
+:NERDTreeToggle
 nmap <Tab> gt
 nmap <S-Tab> gT
 
-"let g:user_emmet_leader_key='<C-E>'
 
-autocmd FileType html imap <buffer><expr><C-E>
-    \ emmet#isExpandable() ? "\<plug>(emmet-expand-abbr)" :
-    \ "\<C-E>"
-
-inoremap { {}<Left>
-inoremap {<Enter> {}<Left><CR><ESC><S-o>
-inoremap ( ()<ESC>i
-inoremap (<Enter> ()<Left><CR><ESC><S-o>
+autocmd BufNewFile,BufRead *.js setlocal ft=javascript
+autocmd BufNewFile,BufRead *.ejs setlocal ft=html
+autocmd BufNewFile,BufRead *.eex setlocal ft=html
+autocmd BufNewFile,BufRead *.py setlocal ft=python
+autocmd BufNewFile,BufRead *.rb setlocal ft=ruby
+autocmd BufNewFile,BufRead Gemfile setlocal ft=ruby
+autocmd BufNewFile,BufRead *.coffee setlocal ft=coffee
+autocmd BufNewFile,BufRead *.ts setlocal ft=typescript
+autocmd BufNewFile,BufRead *.md setlocal ft=markdown
+autocmd BufNewFile,BufRead *.jade setlocal ft=markdown
+autocmd BufNewFile,BufRead *.gyp setlocal ft=json
+autocmd BufNewFile,BufRead *.cson setlocal ft=json
+autocmd BufNewFile,BufRead *.yml setlocal ft=yaml
+autocmd BufNewFile,BufRead *.yaml setlocal ft=yaml
+autocmd BufNewFile,BufRead *.gradle setlocal ft=groovy
 
 
 " 起動時に有効化
@@ -54,6 +60,7 @@ let g:neocomplete#auto_completion_start_length = 2
 let g:neocomplete#enable_auto_close_preview = 0
 "AutoCmd InsertLeave * silent! pclose!
 
+
 let g:neocomplete#max_keyword_width = 10000
 
 if !exists('g:neocomplete#delimiter_patterns')
@@ -62,7 +69,7 @@ endif
 let g:neocomplete#delimiter_patterns.ruby = ['::']
 
 if !exists('g:neocomplete#same_filetypes')
-    let g:neocomplete#same_filetypes = {}        
+    let g:neocomplete#same_filetypes = {}
 endif
 let g:neocomplete#same_filetypes.ruby = 'eruby'
 
@@ -87,3 +94,9 @@ let g:neocomplete#data_directory = $HOME . '/.vim/cache/neocomplete'
 call neocomplete#custom#source('look', 'min_pattern_length', 1)
 
 
+autocmd FileType javascript setlocal omnifunc=nodejscomplete#CompleteJS
+if !exists('g:neocomplcache_omni_functions')
+    let g:neocomplcache_omni_functions = {}
+endif
+let g:neocomplcache_omni_functions.javascript = 'nodejscomplete#CompleteJS'
+let g:node_usejscomplete = 1
