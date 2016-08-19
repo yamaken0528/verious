@@ -100,3 +100,30 @@ if !exists('g:neocomplcache_omni_functions')
 endif
 let g:neocomplcache_omni_functions.javascript = 'nodejscomplete#CompleteJS'
 let g:node_usejscomplete = 1
+
+
+
+let g:user_emmet_mode = 'iv'
+autocmd FileType html imap <buffer><expr><C-E>
+    \ emmet#isExpandable() ? "\<plug>(emmet-expand-abbr)" :
+    \ "\<C-E>"
+
+let g:use_emmet_complete_tag = 1
+let g:user_emmet_settings = {
+    \ 'lang' : 'ja',
+    \ 'html' : {
+    \   'filters' : 'html',
+    \ },
+    \ 'css' : {
+    \   'filters' : 'fc',
+    \ },
+    \ 'php' : {
+    \   'extends' : 'html',
+    \   'filters' : 'html',
+    \ },
+    \}
+augroup EmmitVim
+    autocmd!
+    autocmd FileType * let g:user_emmet_settings.indentation = '               '[:&tabstop]
+augroup END
+
